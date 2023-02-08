@@ -1,7 +1,8 @@
+from json import JSONDecodeError
+
 from google.cloud import firestore
 import streamlit as st
 import openai
-from google.oauth2 import service_account
 from newspaper import Article
 import nltk
 import pandas as pd
@@ -9,30 +10,28 @@ from GoogleNews import GoogleNews
 import spacy
 import json
 
-# # Authenticate to Firestore with the JSON account key.
-# db = firestore.Client.from_service_account_json("news-aggregator-firestore-key.json")
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
+# Load credentials from Firebase
 key_dict = json.loads(st.secrets["textkey"])
-creds = service_account.Credentials.from_service_account_info(key_dict)
-db = firestore.Client(credentials=creds, project="news-aggregator")
+cred = credentials.Certificate(key_dict)
 
-# # Create a reference to the news collection and google-scraper document from firebase
+try:
+    firebase_admin.initialize_app(cred, name='news-aggregator')
+except ValueError as error:
+    if 'already exists' in str(error):
+        app = firebase_admin.get_app('news-aggregator')
+    else:
+        raise error
+
+db = firestore.client()
+
+
+# Create a reference to the news collection and google-scraper document from firebase
 doc_ref = db.collection("news").document("google-scraper")
-# doc = doc_ref.get()
-#
-# # Reference to all news
-# posts_ref = db.collection("news")
-#
-# # Reference to collection
-# for doc in posts_ref.stream():
-#     st.write("The id is: ", doc.id)
-#     st.write("The contents are: ", doc.to_dict())
-
-# Review data
-# st.write(doc.id)
-# st.write(doc.to_dict())
-
-
+doc = doc_ref.get()
 
 # Streamlit App
 nltk.download('punkt')
@@ -60,7 +59,7 @@ if date and query:
                 news.parse()
                 news.nlp()
                 news_title = news.title
-                news_publish_date = news.publish_date
+                # news_publish_date = news.publish_date
                 news_text = news.text
                 news_summary = news.summary
                 news_image = news.top_image
@@ -70,7 +69,7 @@ if date and query:
                 doc_ref.set({
                     "title": news_title,
                     "link": news_link,
-                    "published_date": news_publish_date,
+                    # "published_date": news_publish_date,
                     "content": news_text,
                     "media": news_image,
                     "summary": news_summary,
@@ -87,7 +86,7 @@ for news_data in news_ref.stream():
     data = news_data.to_dict()
     title = data["title"]
     link = data["link"]
-    published_date = data["published_date"]
+    # published_date = data["published_date"]
     content = data["content"]
     media = data["media"]
     summary = data["summary"]
