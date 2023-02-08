@@ -7,18 +7,23 @@ import nltk
 import pandas as pd
 from GoogleNews import GoogleNews
 import spacy
+import json
 
-# Authenticate to Firestore with the JSON account key.
+# # Authenticate to Firestore with the JSON account key.
 # db = firestore.Client.from_service_account_json("news-aggregator-firestore-key.json")
 
-# Create a reference to the news collection and google-scraper document from firebase
-# doc_ref = db.collection("news").document("google-scraper")
+key_dict = json.loads(st.secrets["textkey"])
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds, project="news-aggregator")
+
+# # Create a reference to the news collection and google-scraper document from firebase
+doc_ref = db.collection("news").document("google-scraper")
 # doc = doc_ref.get()
-
-# Reference to all news
+#
+# # Reference to all news
 # posts_ref = db.collection("news")
-
-# Reference to collection
+#
+# # Reference to collection
 # for doc in posts_ref.stream():
 #     st.write("The id is: ", doc.id)
 #     st.write("The contents are: ", doc.to_dict())
@@ -27,11 +32,7 @@ import spacy
 # st.write(doc.id)
 # st.write(doc.to_dict())
 
-import json
 
-key_dict = json.loads(st.secrets["textkey"])
-creds = service_account.Credentials.from_service_account_info(key_dict)
-db = firestore.Client(credentials=creds, project="news-aggregator")
 
 # Streamlit App
 nltk.download('punkt')
