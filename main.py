@@ -34,7 +34,6 @@ db = firestore.Client(credentials=creds, project="news-aggregator")
 
 # Streamlit App
 nltk.download('punkt')
-openai.api_key = st.secrets["api_key"]
 
 # User inputs
 st.title("News")
