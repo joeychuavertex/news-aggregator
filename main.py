@@ -66,10 +66,10 @@ if query:
                 news_image = news.top_image
 
                 # Generate a unique identifier for each news article
-                news_id = hashlib.sha256(news_link.encode()).hexdigest()
+                # news_id = hashlib.sha256(news_link.encode()).hexdigest()
 
                 # Store the news details in Firestore based on unique URL
-                doc_ref = db.collection("news").document("google-scraper")
+                doc_ref = db.collection("news").document(news_link)
                 doc_ref.set({
                     "title": news_title,
                     "link": news_link,
