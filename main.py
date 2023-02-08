@@ -39,13 +39,13 @@ nltk.download('punkt')
 # User inputs
 st.title("News")
 query = st.text_input("Enter your news query:")
-date = st.date_input("Enter date to query news for (YYYY-MM-DD):")
+# date = st.date_input("Enter date to query news for (YYYY-MM-DD):")
 
-if date and query:
+if query:
     # Query news for selected date using Google News API
     gn = GoogleNews()
     gn.search(query)
-    gn.setTimeRange(date, date)
+    # gn.setTimeRange(date, date)
     news_results = gn.result(sort=True)
 
     # Extract details of each news article
