@@ -19,7 +19,7 @@ key_dict = json.loads(st.secrets["textkey"])
 cred = credentials.Certificate(key_dict)
 
 try:
-    firebase_admin.initialize_app(cred, name='news-aggregator')
+    firebase_admin.initialize_app(cred)
 except ValueError as error:
     if 'already exists' in str(error):
         app = firebase_admin.get_app('news-aggregator')
