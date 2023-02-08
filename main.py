@@ -1,3 +1,4 @@
+from datetime import datetime
 from json import JSONDecodeError
 
 from google.cloud import firestore
@@ -69,7 +70,10 @@ if query:
                 # news_id = hashlib.sha256(news_link.encode()).hexdigest()
 
                 # Store the news details in Firestore based on unique URL
-                doc_ref = db.collection("news").document("google-scraper")
+                # doc_ref = db.collection("news").document("google-scraper")
+                doc_ref = db.collection("news").document(
+                    f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_{news_title}")
+
                 doc_ref.set({
                     "title": news_title,
                     "link": news_link,
