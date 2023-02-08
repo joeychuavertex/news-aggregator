@@ -71,8 +71,7 @@ if query:
 
                 # Store the news details in Firestore based on unique URL
                 # doc_ref = db.collection("news").document("google-scraper")
-                doc_ref = db.collection("news").document(
-                    f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_{news_title}")
+                doc_ref = db.collection("news").document("google-scraper")
 
                 doc_ref.set({
                     "title": news_title,
