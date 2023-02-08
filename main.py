@@ -28,6 +28,7 @@ import spacy
 # st.write(doc.to_dict())
 
 import json
+
 key_dict = json.loads(st.secrets["textkey"])
 creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds, project="news-aggregator")
@@ -63,22 +64,34 @@ if date and query:
                 news_summary = news.summary
                 news_image = news.top_image
 
-                # Streamlit View of News
-                st.markdown(f'[{news_title}]({news_link})')
-                if news_image:
-                    st.image(news_image)
-                st.markdown(f"**Provided summary:** {news_summary}")
-
                 # Store the news details in Firestore based on unique URL
                 doc_ref = db.collection("news").document(news_link)
                 doc_ref.set({
                     "title": news_title,
-                    "url": news_link,
-                    "date": news_publish_date,
-                    "text": news_text
+                    "link": news_link,
+                    "published_date": news_publish_date,
+                    "content": news_text,
+                    "media": news_image,
+                    "summary": news_summary,
                 }, merge=True)
 
             except:
                 article_text = "Unable to extract article text."
         else:
             article_text = "Unable to extract article text."
+
+# Render app
+news_ref = db.collection("news")
+for news_data in news_ref.stream():
+    data = news_data.to_dict()
+    title = data["title"]
+    link = data["link"]
+    published_date = data["published_date"]
+    content = data["content"]
+    media = data["media"]
+    summary = data["summary"]
+
+    st.markdown(f'[{title}]({link})')
+    if media:
+        st.image(media)
+    st.markdown(f"**Provided summary:** {summary}")
