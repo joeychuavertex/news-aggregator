@@ -65,7 +65,7 @@ if query:
                 news_image = news.top_image
 
                 # Store the news details in Firestore based on unique URL
-                doc_ref = db.collection("news").document(news_link)
+                doc_ref = db.collection("news").document("google-scraper")
                 doc_ref.set({
                     "title": news_title,
                     "link": news_link,
