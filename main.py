@@ -1,6 +1,7 @@
 from google.cloud import firestore
 import streamlit as st
 import openai
+from google.oauth2 import service_account
 from newspaper import Article
 import nltk
 import pandas as pd
@@ -8,7 +9,7 @@ from GoogleNews import GoogleNews
 import spacy
 
 # Authenticate to Firestore with the JSON account key.
-db = firestore.Client.from_service_account_json("news-aggregator-firestore-key.json")
+# db = firestore.Client.from_service_account_json("news-aggregator-firestore-key.json")
 
 # Create a reference to the news collection and google-scraper document from firebase
 # doc_ref = db.collection("news").document("google-scraper")
@@ -25,6 +26,11 @@ db = firestore.Client.from_service_account_json("news-aggregator-firestore-key.j
 # Review data
 # st.write(doc.id)
 # st.write(doc.to_dict())
+
+import json
+key_dict = json.loads(st.secrets["textkey"])
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds, project="news-aggregator")
 
 # Streamlit App
 nltk.download('punkt')
