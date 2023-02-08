@@ -45,7 +45,7 @@ query = st.text_input("Enter your news query:")
 
 if query:
     # Query news for selected date using Google News API
-    gn = GoogleNews(period="7d")
+    gn = GoogleNews(period="30d")
     gn.search(query)
     # gn.setTimeRange(date, date)
     news_results = gn.result(sort=True)
