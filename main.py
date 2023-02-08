@@ -9,6 +9,7 @@ import pandas as pd
 from GoogleNews import GoogleNews
 import spacy
 import json
+import hashlib
 
 import firebase_admin
 from firebase_admin import credentials
@@ -63,6 +64,9 @@ if query:
                 news_text = news.text
                 news_summary = news.summary
                 news_image = news.top_image
+
+                # Generate a unique identifier for each news article
+                news_id = hashlib.sha256(news_link.encode()).hexdigest()
 
                 # Store the news details in Firestore based on unique URL
                 doc_ref = db.collection("news").document("google-scraper")
