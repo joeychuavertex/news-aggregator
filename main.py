@@ -41,11 +41,10 @@ nltk.download('punkt')
 # User inputs
 st.title("News")
 query = st.text_input("Enter your news query:")
-submit = st.button("submit")
 
 # date = st.date_input("Enter date to query news for (YYYY-MM-DD):")
 
-if query and submit:
+if query:
     # Query news for selected date using Google News API
     gn = GoogleNews(period="30d")
     gn.search(query)
