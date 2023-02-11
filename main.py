@@ -71,21 +71,22 @@ if query:
 
                 # Store the news details in Firestore based on unique URL
                 # doc_ref = db.collection("news").document("google-scraper")
-                doc_ref = db.collection("news").document("google-scraper")
-
-                doc_ref.set({
-                    "title": news_title,
-                    "link": news_link,
-                    # "published_date": news_publish_date,
-                    "content": news_text,
-                    "media": news_image,
-                    "summary": news_summary,
-                }, merge=True)
 
             except:
                 article_text = "Unable to extract article text."
         else:
             article_text = "Unable to extract article text."
+
+        doc_ref = db.collection("news").document(news_link)
+
+        doc_ref.set({
+            "title": news_title,
+            "link": news_link,
+            # "published_date": news_publish_date,
+            "content": news_text,
+            "media": news_image,
+            "summary": news_summary,
+        }, merge=True)
 
 # Render app
 news_ref = db.collection("news")
