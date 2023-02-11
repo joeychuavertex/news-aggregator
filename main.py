@@ -59,21 +59,15 @@ if query:
             news.download()
             news.parse()
             news.nlp()
-            news_title = news.title
-            # news_publish_date = news.publish_date
-            news_text = news.text
-            news_summary = news.summary
-            news_image = news.top_image
 
             doc_ref = db.collection("news").document(news_link)
-
             doc_ref.set({
-                "title": news_title,
+                "title": news.title,
                 "link": news_link,
-                # "published_date": news_publish_date,
-                "content": news_text,
-                "media": news_image,
-                "summary": news_summary,
+                # "published_date": news.publish_date,
+                "content":  news.text,
+                "media": news.top_image,
+                "summary": news.summary,
             }, merge=True)
 
 
