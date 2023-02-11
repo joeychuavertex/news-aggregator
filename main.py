@@ -65,32 +65,30 @@ if query:
             news_summary = news.summary
             news_image = news.top_image
 
-else:
-    pass
-#
-# doc_ref = db.collection("news").document(news_link)
-#
-# doc_ref.set({
-#     "title": news_title,
-#     "link": news_link,
-#     # "published_date": news_publish_date,
-#     "content": news_text,
-#     "media": news_image,
-#     "summary": news_summary,
-# }, merge=True)
-#
-# # Render app
-# news_ref = db.collection("news")
-# for news_data in news_ref.stream():
-#     data = news_data.to_dict()
-#     title = data["title"]
-#     link = data["link"]
-#     # published_date = data["published_date"]
-#     content = data["content"]
-#     media = data["media"]
-#     summary = data["summary"]
-#
-#     st.markdown(f'[{title}]({link})')
-#     if media:
-#         st.image(media)
-#     st.markdown(f"**Provided summary:** {summary}")
+            doc_ref = db.collection("news").document(news_link)
+
+            doc_ref.set({
+                "title": news_title,
+                "link": news_link,
+                # "published_date": news_publish_date,
+                "content": news_text,
+                "media": news_image,
+                "summary": news_summary,
+            }, merge=True)
+
+
+# Render app
+news_ref = db.collection("news")
+for news_data in news_ref.stream():
+    data = news_data.to_dict()
+    title = data["title"]
+    link = data["link"]
+    # published_date = data["published_date"]
+    content = data["content"]
+    media = data["media"]
+    summary = data["summary"]
+
+    st.markdown(f'[{title}]({link})')
+    if media:
+        st.image(media)
+    st.markdown(f"**Provided summary:** {summary}")
