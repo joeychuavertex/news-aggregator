@@ -76,8 +76,8 @@ if query:
                 "summary": news_summary,
             }, merge=True)
 
-        else:
-            article_text = "Unable to extract article text."
+else:
+    article_text = "Unable to extract article text."
 
 
 # Render app
