@@ -65,7 +65,7 @@ if query:
             news_summary = news.summary
             news_image = news.top_image
 
-            doc_ref = db.collection("news").document("google-scraper")
+            doc_ref = db.collection("news").document(news_link)
 
             doc_ref.set({
                 "title": news_title,
