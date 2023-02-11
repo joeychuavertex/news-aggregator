@@ -77,7 +77,7 @@ if query:
             }, merge=True)
 
 else:
-    article_text = "Unable to extract article text."
+    pass
 
 
 # Render app
