@@ -1,3 +1,5 @@
+import urllib.parse
+import uuid
 from datetime import datetime
 from json import JSONDecodeError
 
@@ -24,16 +26,11 @@ try:
     firebase_admin.initialize_app(cred)
 except ValueError as error:
     if 'already exists' in str(error):
-        app = firebase_admin.get_app('news-aggregator')
+        app = firebase_admin.get_app()
     else:
         raise error
 
 db = firestore.client()
-
-
-# Create a reference to the news collection and google-scraper document from firebase
-# doc_ref = db.collection("news").document("google-scraper")
-# doc = doc_ref.get()
 
 # Streamlit App
 nltk.download('punkt')
@@ -46,7 +43,7 @@ query = st.text_input("Enter your news query:")
 
 if query:
     # Query news for selected date using Google News API
-    gn = GoogleNews(period="30d")
+    gn = GoogleNews(start='01/01/2023', end='02/11/2023')
     gn.search(query)
     # gn.setTimeRange(date, date)
     news_results = gn.result(sort=True)
@@ -55,35 +52,49 @@ if query:
     for news in news_results:
         news_link = news["link"]
         if news_link:
-            # Article details
-            news = Article(news_link)
-            news.download()
-            news.parse()
-            news.nlp()
+            try:
+                # Article details
+                news = Article(news_link)
+                news.download()
+                news.parse()
+                news.nlp()
 
-            doc_ref = db.collection("news").document(news_link)
-            doc_ref.set({
-                "title": news.title,
-                "link": news_link,
-                # "published_date": news.publish_date,
-                "content":  news.text,
-                "media": news.top_image,
-                "summary": news.summary,
-            })
+                news_id = str(uuid.uuid5(uuid.NAMESPACE_URL, news_link))
 
+                doc_ref = db.collection("news").document(news_id)
+
+                doc_ref.set({
+                    "id": news_id,
+                    "title": news.title,
+                    "link": news_link,
+                    "published_date": news.publish_date,
+                    "content": news.text,
+                    "media": news.top_image,
+                    "summary": news.summary,
+                    "query": query,
+                })
+            except:
+                pass
 
 # Render app
 news_ref = db.collection("news")
 for news_data in news_ref.stream():
     data = news_data.to_dict()
-    title = data["title"]
-    link = data["link"]
-    # published_date = data["published_date"]
-    content = data["content"]
-    media = data["media"]
-    summary = data["summary"]
+    try:
+        if query == data["query"]:
+            title = data["title"]
+            link = data["link"]
+            published_date = data["published_date"]
+            content = data["content"]
+            media = data["media"]
+            summary = data["summary"]
 
-    st.markdown(f'[{title}]({link})')
-    if media:
-        st.image(media)
-    st.markdown(f"**Provided summary:** {summary}")
+            st.markdown(f'[{title}]({link})')
+            if media:
+                st.image(media)
+            st.markdown(f"**Provided summary:** {summary}")
+    except KeyError:
+        pass
+
+    else:
+        pass
