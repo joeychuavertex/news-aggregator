@@ -54,38 +54,31 @@ if query:
     for news in news_results:
         news_link = news["link"]
         if news_link:
-            try:
-                # Article details
-                news = Article(news_link)
-                news.download()
-                news.parse()
-                news.nlp()
-                news_title = news.title
-                # news_publish_date = news.publish_date
-                news_text = news.text
-                news_summary = news.summary
-                news_image = news.top_image
+            # Article details
+            news = Article(news_link)
+            news.download()
+            news.parse()
+            news.nlp()
+            news_title = news.title
+            # news_publish_date = news.publish_date
+            news_text = news.text
+            news_summary = news.summary
+            news_image = news.top_image
 
-                # Generate a unique identifier for each news article
-                # news_id = hashlib.sha256(news_link.encode()).hexdigest()
+            doc_ref = db.collection("news").document(news_link)
 
-                # Store the news details in Firestore based on unique URL
-                # doc_ref = db.collection("news").document("google-scraper")
-                doc_ref = db.collection("news").document(news_link)
+            doc_ref.set({
+                "title": news_title,
+                "link": news_link,
+                # "published_date": news_publish_date,
+                "content": news_text,
+                "media": news_image,
+                "summary": news_summary,
+            }, merge=True)
 
-                doc_ref.stream({
-                    "title": news_title,
-                    "link": news_link,
-                    # "published_date": news_publish_date,
-                    "content": news_text,
-                    "media": news_image,
-                    "summary": news_summary,
-                }, merge=True)
-
-            except:
-                article_text = "Unable to extract article text."
         else:
             article_text = "Unable to extract article text."
+
 
 # Render app
 news_ref = db.collection("news")
